@@ -38,7 +38,7 @@ function DashboardContent() {
             }
            `}
         >
-          {useApi ? '● Live API Data' : '○ Simulation Mode'}
+          ● Live API Data
         </button>
       </div>
 

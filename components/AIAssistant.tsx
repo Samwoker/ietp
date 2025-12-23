@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Mic, MicOff, Send, X, Bot, User, Volume2, VolumeX } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, User } from 'lucide-react';
 import { useSterilization } from '../context/SterilizationContext';
 import { processChatMessage, ChatMessage } from '../services/chatService';
 
@@ -12,32 +12,8 @@ export function AIAssistant() {
         { role: 'assistant', content: "Hello! I'm your AI Sterilization Assistant. How can I help you today?" }
     ]);
     const [inputValue, setInputValue] = useState('');
-    const [isListening, setIsListening] = useState(false);
-    const [isSpeaking, setIsSpeaking] = useState(false);
-    const [ttsEnabled, setTtsEnabled] = useState(true);
 
     const scrollRef = useRef<HTMLDivElement>(null);
-    const recognitionRef = useRef<any>(null);
-
-    // Initialize Web Speech API (Recognition)
-    useEffect(() => {
-        if (typeof window !== 'undefined' && ('WebkitSpeechRecognition' in window || 'speechRecognition' in window)) {
-            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'en-US';
-
-            recognitionRef.current.onstart = () => setIsListening(true);
-            recognitionRef.current.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                handleSendMessage(transcript);
-            };
-
-            recognitionRef.current.onerror = () => setIsListening(false);
-            recognitionRef.current.onend = () => setIsListening(false);
-        }
-    }, []);
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -45,16 +21,6 @@ export function AIAssistant() {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages]);
-
-    const speak = (text: string) => {
-        if (!ttsEnabled || typeof window === 'undefined') return;
-
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        window.speechSynthesis.speak(utterance);
-    };
 
     const handleSendMessage = async (text: string = inputValue) => {
         if (!text.trim()) return;
@@ -71,23 +37,6 @@ export function AIAssistant() {
 
         const assistantMsg: ChatMessage = { role: 'assistant', content: response };
         setMessages(prev => [...prev, assistantMsg]);
-
-        if (ttsEnabled) {
-            speak(response);
-        }
-    };
-
-    const toggleListening = () => {
-        if (isListening) {
-            recognitionRef.current?.stop();
-        } else {
-            try {
-                recognitionRef.current?.start();
-            } catch (e) {
-                console.error("Speech recognition error:", e);
-                setIsListening(false);
-            }
-        }
     };
 
     const clearChat = () => {
@@ -133,12 +82,6 @@ export function AIAssistant() {
                             >
                                 Clear
                             </button>
-                            <button
-                                onClick={() => setTtsEnabled(!ttsEnabled)}
-                                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                            >
-                                {ttsEnabled ? <Volume2 className={`w-4 h-4 ${isSpeaking ? 'animate-bounce text-emerald-400' : ''}`} /> : <VolumeX className="w-4 h-4" />}
-                            </button>
                         </div>
                     </div>
 
@@ -160,12 +103,6 @@ export function AIAssistant() {
 
                     {/* Input Area */}
                     <div className="p-4 bg-white border-t border-slate-100 flex items-center gap-2">
-                        <button
-                            onClick={toggleListening}
-                            className={`p-2 rounded-xl transition-colors ${isListening ? 'bg-rose-100 text-rose-500 animate-pulse' : 'hover:bg-slate-100 text-slate-400'}`}
-                        >
-                            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                        </button>
                         <input
                             type="text"
                             value={inputValue}

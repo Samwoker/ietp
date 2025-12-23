@@ -39,7 +39,7 @@ export function AIAgentCard({ analysis, killPercentage, insight }: AIAgentCardPr
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <Sparkles className="w-4 h-4 text-amber-400" />
-                            <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">AI Sterilization Analysis</h3>
+                            <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">Sterilization Analysis</h3>
                         </div>
 
                         <div className="min-h-[3rem]">

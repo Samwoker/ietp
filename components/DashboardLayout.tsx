@@ -20,8 +20,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         <div className="p-2 bg-indigo-500/10 rounded-lg">
                             <LayoutDashboard className="w-6 h-6 text-indigo-600" />
                         </div>
-                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-cyan-600">
-                            SensorFlow
+                        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-black">
+                            Biosense Autoclave
                         </h1>
                     </div>
 
